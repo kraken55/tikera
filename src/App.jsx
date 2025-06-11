@@ -59,7 +59,17 @@ function App() {
     setTicketQuantities(prev => {
       const newQuantity = Math.max(0, prev[type] + amount);
       const newQuantities = { ...prev, [type]: newQuantity };
-      setSelectedSeats([]);
+
+      const newTotalTickets = Object.values(newQuantities).reduce((sum, qty) => sum + qty, 0);
+      
+      // Only adjust selected seats if the new total is less than current selected seats
+      setSelectedSeats(prevSeats => {
+        if (newTotalTickets < prevSeats.length) {
+          return prevSeats.slice(0, newTotalTickets);
+        }
+        return prevSeats;
+      });
+      
       return newQuantities;
     });
   };
